@@ -29,7 +29,7 @@ public:
 
         compare_type comp;
         std::sort( index_.begin(), index_.end(),
-                   [=]( const size_type& lhs, const size_type& rhs )
+                   [&]( const size_type& lhs, const size_type& rhs )
                    {
                        return comp( vector_[lhs], vector_[rhs] );
                    });
@@ -44,9 +44,9 @@ public:
     {
         compare_type comp;
         auto pos = std::lower_bound( index_.begin(), index_.end(), key,
-                                     [&]( const size_type& lhs, const size_type& rhs )
+                                     [&]( const size_type& lhs, const vector_type& key )
                                      {
-                                         return comp( vector_[lhs], vector_[rhs] );
+                                         return comp( vector_[lhs], key );
                                      });
         if( index_.end() != pos )
         {
