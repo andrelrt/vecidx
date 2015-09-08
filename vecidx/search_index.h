@@ -21,6 +21,27 @@ public:
 
     search_index( const std::vector<VecType_T>& vec ) : vector_(vec) {}
 
+
+    void prebuild( std::vector< vector_type >& vec, size_t start, size_t end )
+    {
+        size_t diff = end - start;
+        if( 1 == diff )
+        {
+            vec.push_back( start );
+            return;
+        } 
+        if( 0 == diff )
+        {
+            return;
+        }
+        size_t mid = diff / 2;
+
+        vec.push_back( start + mid );
+
+        prebuild( vec, start, start + mid );
+        prebuild( vec, start + mid + 1, end );
+    }
+
     void build_index()
     {
         std::vector< size_type > idx;
@@ -38,31 +59,68 @@ public:
 
         index_.clear();
         index_.reserve( idx.size() );
-        
 
-        size_t pos = 0;
-        size_type size = static_cast<size_type>( idx.size() );
-        index_.push_back( static_cast<size_type>( idx.size() / 2 ) );
+        std::vector< vector_type > vec;
+        vec.reserve( idx.size() );
+        prebuild( vec, 0, idx.size() );
 
-        size >>= 1;
-        size_t much = 1;
-        while( size )
+        index_.push_back( vec[ 0 ] );
+
+        size_t mid = vec.size() - 1;
+
+        if( mid & 1 ) // odd
         {
-            for( size_t i = 0; i < much; ++i )
-            {
-                //std::cout << (int)size << ", " << (int)size/2 << "\n";
-                index_.push_back( static_cast<size_type>( index_[ pos ] - size/2 - 1 ) );
-                index_.push_back( static_cast<size_type>( index_[ pos ] + size/2 + 1 ) );
-                ++pos;
-            }
-            size >>= 1;
-            much <<= 1;
+            mid = mid / 2 + 1;
+        }
+        else // even
+        {
+            mid = mid / 2;
         }
 
-        std::transform( index_.begin(), index_.end(), index_.begin(), [ & ]( size_type val ) { return idx[ val ]; } );
+        //size_t pos = 0;
+        //size_type size = static_cast<size_type>( idx.size() );
+        //index_.push_back( static_cast<size_type>( idx.size() / 2 ) );
 
-        //std::for_each( index_.begin(), index_.end(), []( size_type val ) { std::cout << static_cast<int>( val ) << ", "; } );
-        //std::cout << "\n\n";
+        //size_t count = 1;
+        //size_t div = 4;
+        //while( size > div )
+        //{
+        //    for( size_t i = 0; i < count; ++i )
+        //    {
+        //        std::cout << "(" << (int) index_[ pos ] << ", " << size / div << ") - ";
+
+        //        if( ( index_[ pos ] - last_value ) & 1 ) // odd
+        //        {
+        //            index_.push_back( static_cast<size_type>( index_[ pos ] - size / div - 1 ) );
+        //            index_.push_back( static_cast<size_type>( index_[ pos ] + size / div + 1 ) );
+        //        }
+        //        else // even
+        //        {
+        //            index_.push_back( static_cast<size_type>( index_[ pos ] - size / div - 1 ) );
+        //            index_.push_back( static_cast<size_type>( index_[ pos ] + size / div ) );
+        //        }
+
+
+        //        ++pos;
+        //    }
+        //    div <<= 1;
+        //    count <<= 1;
+        //}
+        //size_t rsize = index_.size();
+        //for( size_t i = 0; i < count; ++i )
+        //{
+        //    std::cout << (int) index_[ pos ] << ", ";
+        //    index_.push_back( static_cast<size_type>( index_[ pos ] - 1 ) );
+        //    index_.push_back( static_cast<size_type>( index_[ pos ] + 1 ) );
+        //    ++pos;
+        //}
+
+
+        //std::transform( index_.begin(), index_.end(), index_.begin(), [ & ]( size_type val ) { return idx[ val ]; } );
+
+        std::cout << "\n";
+        std::for_each( index_.begin(), index_.end(), []( size_type val ) { std::cout << static_cast<int>( val ) << ", "; } );
+        std::cout << "\n\n";
         //std::for_each( index_.begin(), index_.end(), [&]( size_type val ) { std::cout << static_cast<int>( vector_[val] ) << ", "; } );
         //std::cout << "\n\n";
     }
