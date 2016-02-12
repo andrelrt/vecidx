@@ -51,16 +51,16 @@ int main(int /*argc*/, char* /*argv*/[])
 
     {
         std::cout << "\nsize: 0xff\n\n";
-        bench<vecidx::vector_index,  uint8_t>( "vecidx::vector_index,  uint8", 0xff, 100'000 );
-        bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xff, 100'000 );
-        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xff, 100'000 );
-        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xff, 100'000 );
+        bench<vecidx::vector_index,  uint8_t>( "vecidx::vector_index,  uint8", 0xff, 100000 );
+        bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xff, 100000 );
+        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xff, 100000 );
+        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xff, 100000 );
 
         std::cout << "\n";
-        bench<vecidx::search_index,  uint8_t>( "vecidx::search_index,  uint8", 0xff, 100'000 );
-        bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xff, 100'000 );
-        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xff, 100'000 );
-        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xff, 100'000 );
+        bench<vecidx::search_index,  uint8_t>( "vecidx::search_index,  uint8", 0xff, 100000 );
+        bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xff, 100000 );
+        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xff, 100000 );
+        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xff, 100000 );
     }
 
     {
@@ -76,13 +76,13 @@ int main(int /*argc*/, char* /*argv*/[])
     }
 
     {
-        std::cout << "\nsize: 0x0fff'ffff\n\n";
-        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0x0fff'ffff, 1 );
-        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0x0fff'ffff, 1 );
+        std::cout << "\nsize: 0x03ff'ffff\n\n";
+        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0x03ffffff, 1 );
+        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0x03ffffff, 1 );
 
         std::cout << "\n";
-        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0x0fff'ffff, 1 );
-        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0x0fff'ffff, 1 );
+        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0x03ffffff, 1 );
+        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0x03ffffff, 1 );
     }
     return 0;
 }
