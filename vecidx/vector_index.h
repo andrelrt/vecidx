@@ -22,10 +22,8 @@ public:
 
     void build_index()
     {
-        index_.resize( vector_.size(), 0 );
-        size_type value = 0;
-        std::generate( index_.begin(), index_.end(),
-                       [&](){ return value++; });
+        index_.resize( vector_.size() );
+        std::iota( index_.begin(), index_.end(), 0 );
 
         compare_type comp;
         std::sort( index_.begin(), index_.end(),

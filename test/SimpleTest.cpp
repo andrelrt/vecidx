@@ -4,6 +4,7 @@
 
 #include "../vecidx/vector_index.h"
 #include "../vecidx/search_index.h"
+#include "../vecidx/tree_index.h"
 
 
 template< template < typename... > class Index_T, typename Index_Size_T >
@@ -12,8 +13,9 @@ void bench( const std::string& name, size_t size, size_t loop )
     boost::timer::cpu_timer timer;
     std::vector<size_t> org( size );
 
-    srand( 1 );
-    std::generate( org.begin(), org.end(), &rand );
+    //srand( 1 );
+    //std::generate( org.begin(), org.end(), &rand );
+    std::iota( org.begin(), org.end(), 0 );
     Index_T< Index_Size_T, size_t > index( org );
 
     timer.start();
@@ -49,31 +51,42 @@ int main(int /*argc*/, char* /*argv*/[])
 {
     //bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 15, 1 );
 
-    {
-        std::cout << "\nsize: 0xff\n\n";
-        bench<vecidx::vector_index,  uint8_t>( "vecidx::vector_index,  uint8", 0xff, 100000 );
-        bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xff, 100000 );
-        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xff, 100000 );
-        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xff, 100000 );
+    //{
+    //    std::cout << "\nsize: 0xff\n\n";
+    //    bench<vecidx::vector_index,  uint8_t>( "vecidx::vector_index,  uint8", 0xff, 100000 );
+    //    bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xff, 100000 );
+    //    bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xff, 100000 );
+    //    bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xff, 100000 );
 
-        std::cout << "\n";
-        bench<vecidx::search_index,  uint8_t>( "vecidx::search_index,  uint8", 0xff, 100000 );
-        bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xff, 100000 );
-        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xff, 100000 );
-        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xff, 100000 );
-    }
+    //    std::cout << "\n";
+    //    bench<vecidx::search_index, uint8_t>( "vecidx::search_index,  uint8", 0xff, 100000 );
+    //    bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xff, 100000 );
+    //    bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xff, 100000 );
+    //    bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xff, 100000 );
 
-    {
-        std::cout << "\nsize: 0xffff\n\n";
-        bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xffff, 100 );
-        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xffff, 100 );
-        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xffff, 100 );
+    //    std::cout << "\n";
+    //    bench<vecidx::tree_index,  uint8_t>( "vecidx::tree_index,  uint8", 0xff, 100000 );
+    //    bench<vecidx::tree_index, uint16_t>( "vecidx::tree_index, uint16", 0xff, 100000 );
+    //    bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0xff, 100000 );
+    //    bench<vecidx::tree_index, uint64_t>( "vecidx::tree_index, uint64", 0xff, 100000 );
+    //}
 
-        std::cout << "\n";
-        bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xffff, 100 );
-        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xffff, 100 );
-        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xffff, 100 );
-    }
+    //{
+    //    std::cout << "\nsize: 0xffff\n\n";
+    //    bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xffff, 100 );
+    //    bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xffff, 100 );
+    //    bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xffff, 100 );
+
+    //    std::cout << "\n";
+    //    bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xffff, 100 );
+    //    bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xffff, 100 );
+    //    bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xffff, 100 );
+
+    //    std::cout << "\n";
+    //    bench<vecidx::tree_index, uint16_t>( "vecidx::tree_index, uint16", 0xffff, 100 );
+    //    bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0xffff, 100 );
+    //    bench<vecidx::tree_index, uint64_t>( "vecidx::tree_index, uint64", 0xffff, 100 );
+    //}
 
     {
         std::cout << "\nsize: 0x03ff'ffff\n\n";
@@ -83,6 +96,10 @@ int main(int /*argc*/, char* /*argv*/[])
         std::cout << "\n";
         bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0x03ffffff, 1 );
         bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0x03ffffff, 1 );
+
+        std::cout << "\n";
+        bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0x03ffffff, 1 );
+        bench<vecidx::tree_index, uint64_t>( "vecidx::tree_index, uint64", 0x03ffffff, 1 );
     }
     return 0;
 }

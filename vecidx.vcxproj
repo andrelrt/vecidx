@@ -146,10 +146,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="vecidx\search_index.h" />
+    <ClInclude Include="vecidx\tree_index.h" />
     <ClInclude Include="vecidx\vector_index.h" />
   </ItemGroup>
   <ItemGroup>

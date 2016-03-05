@@ -24,10 +24,8 @@ public:
     void build_index()
     {
         std::vector< size_type > idx;
-        idx.resize( vector_.size(), 0 );
-        size_type value = 0;
-        std::generate( idx.begin(), idx.end(),
-                       [&](){ return value++; });
+        idx.resize( vector_.size() );
+        std::iota( idx.begin(), idx.end(), 0 );
 
         compare_type comp;
         std::sort( idx.begin(), idx.end(),
