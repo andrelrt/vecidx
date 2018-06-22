@@ -1,10 +1,12 @@
 #ifndef VECIDX_SEARCH_INDEX_H
 #define VECIDX_SEARCH_INDEX_H
 
-#include <iostream>
 #include <cstdint>
+#include <vector>
+#include <iostream>
 #include <functional>
 #include <algorithm>
+#include <numeric>
 
 namespace vecidx {
 
@@ -14,10 +16,10 @@ template< typename Size_T,
 class search_index
 {
 public:
-    typedef Size_T size_type;
-    typedef VecType_T vector_type;
-    typedef VecComp_T compare_type;
-    typedef typename std::vector< vector_type >::const_iterator const_iterator;
+    using size_type      = Size_T;
+    using vector_type    = VecType_T;
+    using compare_type   = VecComp_T;
+    using const_iterator = typename std::vector< vector_type >::const_iterator;
 
     search_index( const std::vector<VecType_T>& vec ) : vector_(vec) {}
 
