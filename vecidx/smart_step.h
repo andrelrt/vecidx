@@ -1,6 +1,18 @@
 #ifndef VECIDX_SMART_STEP_H
 #define VECIDX_SMART_STEP_H
 
+std::ostream& operator<<( std::ostream& out, const __m256i& val )
+{
+    const uint32_t* v = reinterpret_cast<const uint32_t*>( &val );
+    out << std::hex << "(";
+    for( size_t i = 0; i < 7; ++i )
+    {
+        out << "0x" << std::setw(8) << std::setfill( '0' ) << v[i] << ", ";
+    }
+    out << "0x" << std::setw(8) << std::setfill( '0' ) << v[7] << ")";
+    return out;
+}
+
 namespace vecidx {
 
 template< typename VecType_T > struct smart_index { };
@@ -50,37 +62,132 @@ public:
     void build_index()
     {
         size_t step = ref_.size() / (array_size + 1);
-       
-        const_iterator beg;
+
         const_iterator end = ref_.begin();
+        vector_type* pCmp = reinterpret_cast< vector_type* >( &cmp_ );
         for( size_t i = 0; i < array_size; ++i )
         {
-            beg = end; 
-            std::advance( end, step ); 
-            ranges_[ i ] = std::make_pair( beg, end +1 );
-        } 
-        ranges_[ array_size ] = std::make_pair( end, ref_.end() );
-
-        vector_type* pCmp = reinterpret_cast< vector_type* >( &cmp_ );
-        for( size_t i = 1; i <= array_size; ++i )
-        {
-            *pCmp = *ranges_[ i ].first;
+            std::advance( end, step );
+            *pCmp = *end;
             ++pCmp;
         }
+        //std::cout << "Cmp: " << cmp_ << std::endl;
     }
 
     const_iterator find( const vector_type& key ) const
     {
         size_t i = smart_index< vector_type >::compare( key, cmp_ );
-        auto first = std::lower_bound( ranges_[i].first, ranges_[i].second, key );
-        return (first!=ranges_[i].second && !(key<*first)) ? first : ref_.end();
+        size_t step = ref_.size() / (array_size + 1);
+
+        const_iterator beg = ref_.begin();
+        std::advance( beg, i * step );
+        const_iterator end;
+        if( i == array_size )
+        {
+            end = ref_.end();
+        }
+        else
+        {
+            end = beg;
+            std::advance( end, step );
+            ++end;
+        }
+
+        auto first = std::lower_bound( beg, end, key );
+        return (first!=end && !(key<*first)) ? first : ref_.end();
     }
 
 private:
     __m256i cmp_;
     const std::vector< vector_type >& ref_;
     constexpr static size_t array_size = 32/sizeof(vector_type);
-    std::array< std::pair< const_iterator, const_iterator >, array_size + 1 > ranges_;
+};
+
+//Two-level smart_step
+template< typename DUMMY_T, typename VecType_T >
+class smart_step2
+{
+public:
+    using vector_type    = VecType_T;
+    using const_iterator = typename std::vector< vector_type >::const_iterator;
+
+    smart_step2( const std::vector< vector_type >& ref )
+        : ref_( ref ){}
+
+    void build_index()
+    {
+        size_t step = ref_.size() / (array_size + 1);
+
+        const_iterator end = ref_.begin();
+        vector_type* pCmp = reinterpret_cast< vector_type* >( cmp_.data() );
+        for( size_t i = 0; i < array_size; ++i )
+        {
+            const_iterator beg = end;
+            std::advance( end, step );
+            cmp_[ i+1 ] = build_index( beg, end+1 );
+
+            *pCmp = *end;
+            ++pCmp;
+        }
+        cmp_[ array_size +1 ] = build_index( end, ref_.end() );
+        //std::cout << "Cmp: " << cmp_[0] << std::endl;
+    }
+
+    const_iterator find( const vector_type& key ) const
+    {
+        size_t i = smart_index< vector_type >::compare( key, cmp_[0] );
+        size_t j = smart_index< vector_type >::compare( key, cmp_[i+1] );
+        size_t step = ref_.size() / (array_size + 1);
+
+        const_iterator beg = ref_.begin();
+        std::advance( beg, i * step );
+
+        const_iterator end = beg;
+        std::advance( end, step );
+        ++end;
+
+        step = step / (array_size +1);
+        std::advance( beg, j * step );
+
+        if( i == array_size && j == array_size )
+        {
+            end = ref_.end();
+        }
+        else if( j != array_size )
+        {
+            end = beg;
+            std::advance( end, step );
+            ++end;
+        }
+
+        auto first = std::lower_bound( beg, end, key );
+        return (first!=end && !(key<*first)) ? first : ref_.end();
+    }
+
+private:
+    constexpr static size_t array_size = 32/sizeof(vector_type);
+
+    const std::vector< vector_type >& ref_;
+    std::array< __m256i, array_size +2 > cmp_;
+
+    __m256i build_index( const_iterator begin, const_iterator end )
+    {
+        size_t size = std::distance( begin, end );
+        size_t step = size / (array_size + 1);
+
+        __m256i ret;
+        vector_type* pRet = reinterpret_cast< vector_type* >( &ret );
+
+        const_iterator it = begin;
+        for( size_t i = 0; i < array_size; ++i )
+        {
+            std::advance( it, step );
+            *pRet = *it;
+            ++pRet;
+        }
+        //std::cout << "Cmp: " << ret << " - beg, end, size: " << *begin << ", " << *end << ", " << size << std::endl;
+        return ret;
+    }
 };
 
 } // namespace vecidx
