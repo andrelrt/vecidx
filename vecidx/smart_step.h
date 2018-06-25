@@ -201,6 +201,57 @@ private:
     }
 };
 
+
+//n-level smart_step
+template< typename DUMMY_T, typename VecType_T >
+class smart_stepN
+{
+public:
+    using vector_type    = VecType_T;
+    using const_iterator = typename std::vector< vector_type >::const_iterator;
+
+    smart_stepN( const std::vector< vector_type >& ref )
+        : ref_( ref ), range_( std::make_pair( ref.begin(), ref.end() ) ) {}
+
+    void build_index()
+    {
+        size_t size = std::distance( range_.first, range_.second );
+        size_t step = size / (array_size + 1);
+
+        vector_type* pCmp = reinterpret_cast< vector_type* >( &cmp_ );
+
+        const_iterator it = begin;
+        for( size_t i = 0; i < array_size; ++i )
+        {
+            const_iterator beg = it;
+            std::advance( it, step );
+
+            *pCmp = *it;
+            ++pCmp;
+            std::advance( end, step );
+            cmp_[ i+1 ] = build_index( beg, end+1 );
+
+            *pCmp = *end;
+            ++pCmp;
+        }
+        //std::cout << "Cmp: " << cmp_ << " - beg, end, size: " << *range_.first << ", " << *range_.second << ", " << size << std::endl;
+    }
+
+    const_iterator find( const vector_type& key ) const
+    {
+    }
+
+private:
+    constexpr static size_t array_size = 32/sizeof(vector_type);
+
+    const std::vector< vector_type >& ref_;
+    typename smart_index< vector_type >::index_type cmp_;
+    const std::pair< const_iterator, const_iterator > range_;
+
+    smart_stepN( const std::vector< vector_type >& ref, const_iterator beg, const_iterator end )
+        : ref_( ref ), range_( std::make_pair( beg, end ) ) {}
+};
+
 } // namespace vecidx
 
 #endif // VECIDX_SMART_STEP_H
