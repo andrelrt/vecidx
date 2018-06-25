@@ -1,6 +1,9 @@
 #ifndef VECIDX_SMART_STEP_H
 #define VECIDX_SMART_STEP_H
 
+#include <immintrin.h>
+#include <x86intrin.h>
+
 std::ostream& operator<<( std::ostream& out, const __m256i& val )
 {
     const uint32_t* v = reinterpret_cast<const uint32_t*>( &val );
@@ -19,33 +22,41 @@ template< typename VecType_T > struct smart_index { };
 
 template<> struct smart_index< uint8_t >
 {
-    static inline size_t compare( uint8_t key, __m256i cmp ) {
-        uint32_t mask = _mm256_movemask_epi8( _mm256_cmpgt_epi8( _mm256_set1_epi8( key ), cmp ) );
-        return (mask == 0) ? 0 : _bit_scan_reverse( mask ) + 1;
+    using inner_type = __m128i;
+    constexpr static size_t array_size = 16/sizeof(uint8_t);
+    static inline size_t compare( uint8_t key, __m128i cmp ) {
+        uint32_t mask = _mm_movemask_epi8( _mm_cmpgt_epi8( _mm_set1_epi8( key ), cmp ) );
+        return _bit_scan_reverse( mask + 1 );
     }
 };
 
 template<> struct smart_index< uint16_t >
 {
-    static inline size_t compare( uint16_t key, __m256i cmp ) {
-        uint32_t mask = _mm256_movemask_epi8( _mm256_cmpgt_epi16( _mm256_set1_epi16( key ), cmp ) );
-        return (mask == 0) ? 0 : (_bit_scan_reverse( mask ) + 1) >> 1;
+    using inner_type = __m128i;
+    constexpr static size_t array_size = 16/sizeof(uint16_t);
+    static inline size_t compare( uint16_t key, __m128i cmp ) {
+        uint32_t mask = _mm_movemask_epi8( _mm_cmpgt_epi16( _mm_set1_epi16( key ), cmp ) );
+        return _bit_scan_reverse( mask + 1 ) >> 1;
     }
 };
 
 template<> struct smart_index< uint32_t >
 {
-    static inline size_t compare( uint32_t key, __m256i cmp ) {
-        uint32_t mask = _mm256_movemask_epi8( _mm256_cmpgt_epi32( _mm256_set1_epi32( key ), cmp ) );
-        return (mask == 0) ? 0 : (_bit_scan_reverse( mask ) + 1) >> 2;
+    using inner_type = __m128i;
+    constexpr static size_t array_size = 16/sizeof(uint32_t);
+    static inline size_t compare( uint32_t key, __m128i cmp ) {
+        uint32_t mask = _mm_movemask_epi8( _mm_cmpgt_epi32( _mm_set1_epi32( key ), cmp ) );
+        return _bit_scan_reverse( mask + 1 ) >> 2;
     }
 };
 
 template<> struct smart_index< uint64_t >
 {
-    static inline size_t compare( uint64_t key, __m256i cmp ) {
-        uint32_t mask = _mm256_movemask_epi8( _mm256_cmpgt_epi64( _mm256_set1_epi64x( key ), cmp ) );
-        return (mask == 0) ? 0 : (_bit_scan_reverse( mask ) + 1) >> 3;
+    using inner_type = __m128i;
+    constexpr static size_t array_size = 16/sizeof(uint64_t);
+    static inline size_t compare( uint64_t key, __m128i cmp ) {
+        uint32_t mask = _mm_movemask_epi8( _mm_cmpgt_epi64( _mm_set1_epi64x( key ), cmp ) );
+        return _bit_scan_reverse( mask + 1 ) >> 3;
     }
 };
 
@@ -57,7 +68,7 @@ public:
     using const_iterator = typename std::vector< vector_type >::const_iterator;
 
     smart_step( const std::vector< vector_type >& ref )
-        : cmp_( _mm256_set1_epi64x( 0 ) ), ref_( ref ){}
+        : ref_( ref ){}
 
     void build_index()
     {
@@ -98,9 +109,9 @@ public:
     }
 
 private:
-    __m256i cmp_;
     const std::vector< vector_type >& ref_;
-    constexpr static size_t array_size = 32/sizeof(vector_type);
+    typename smart_index< vector_type >::inner_type cmp_;
+    constexpr static size_t array_size = smart_index< vector_type >::array_size;
 };
 
 //Two-level smart_step
@@ -165,17 +176,17 @@ public:
     }
 
 private:
-    constexpr static size_t array_size = 32/sizeof(vector_type);
+    constexpr static size_t array_size = smart_index< vector_type >::array_size;
 
     const std::vector< vector_type >& ref_;
-    std::array< __m256i, array_size +2 > cmp_;
+    std::array< typename smart_index< vector_type >::inner_type, array_size +2 > cmp_;
 
-    __m256i build_index( const_iterator begin, const_iterator end )
+    typename smart_index< vector_type >::inner_type build_index( const_iterator begin, const_iterator end )
     {
         size_t size = std::distance( begin, end );
         size_t step = size / (array_size + 1);
 
-        __m256i ret;
+        typename smart_index< vector_type >::inner_type ret;
         vector_type* pRet = reinterpret_cast< vector_type* >( &ret );
 
         const_iterator it = begin;

@@ -67,105 +67,107 @@ size_t bench( const std::string& name, size_t size, size_t loop )
     }
     timer.stop();
     std::cout << name << "_index find all: " << timer.format();
+    std::cout << "Raw wall: " << timer.elapsed().wall << std::endl;
 
-    return timer.elapsed().user;
+    return timer.elapsed().wall;
 }
 
 int main(int /*argc*/, char* /*argv*/[])
 {
     //bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 15, 1 );
 
-    {
-        std::cout << "\nsize: 0xff\n\n";
-        bench<vector_only,  uint8_t>( "vector_only,  uint8", 0xff, 100000 );
-        bench<vector_only, uint16_t>( "vector_only, uint16", 0xff, 100000 );
-        bench<vector_only, uint32_t>( "vector_only, uint32", 0xff, 100000 );
-        bench<vector_only, uint64_t>( "vector_only, uint64", 0xff, 100000 );
-
-        std::cout << "\n";
-        bench<vecidx::vector_index,  uint8_t>( "vecidx::vector_index,  uint8", 0xff, 100000 );
-        bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xff, 100000 );
-        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xff, 100000 );
-        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xff, 100000 );
-
-        std::cout << "\n";
-        bench<vecidx::search_index, uint8_t>( "vecidx::search_index,  uint8", 0xff, 100000 );
-        bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xff, 100000 );
-        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xff, 100000 );
-        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xff, 100000 );
-
-//        std::cout << "\n";
-//        bench<vecidx::tree_index,  uint8_t>( "vecidx::tree_index,  uint8", 0xff, 100000 );
-//        bench<vecidx::tree_index, uint16_t>( "vecidx::tree_index, uint16", 0xff, 100000 );
-//        bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0xff, 100000 );
-//        bench<vecidx::tree_index, uint64_t>( "vecidx::tree_index, uint64", 0xff, 100000 );
-
-        std::cout << "\n";
-        bench<vecidx::smart_step, uint32_t>( "vecidx::smart_step, uint32", 0xff, 100000 );
-        bench<vecidx::smart_step2, uint32_t>( "vecidx::smart_step2, uint32", 0xff, 100000 );
-    }
-
-    {
-        std::cout << "\nsize: 0xffff\n\n";
-        bench<vector_only, uint16_t>( "vector_only, uint16", 0xffff, 100 );
-        bench<vector_only, uint32_t>( "vector_only, uint32", 0xffff, 100 );
-        bench<vector_only, uint64_t>( "vector_only, uint64", 0xffff, 100 );
-
-        std::cout << "\n";
-        bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xffff, 100 );
-        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xffff, 100 );
-        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xffff, 100 );
-
-        std::cout << "\n";
-        bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xffff, 100 );
-        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xffff, 100 );
-        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xffff, 100 );
-
-//        std::cout << "\n";
-//        bench<vecidx::tree_index, uint16_t>( "vecidx::tree_index, uint16", 0xffff, 100 );
-//        bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0xffff, 100 );
-//        bench<vecidx::tree_index, uint64_t>( "vecidx::tree_index, uint64", 0xffff, 100 );
-
-        std::cout << "\n";
-        bench<vecidx::smart_step, uint32_t>( "vecidx::smart_step, uint32", 0xffff, 100 );
-        bench<vecidx::smart_step2, uint32_t>( "vecidx::smart_step2, uint32", 0xffff, 100 );
-    }
-
-    {
-        std::cout << "\nsize: 0x03ff'ffff\n\n";
-        bench<vector_only, uint32_t>( "vector_only, uint32", 0x03ffffff, 1 );
-        bench<vector_only, uint64_t>( "vector_only, uint64", 0x03ffffff, 1 );
-
-        std::cout << "\n";
-        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0x03ffffff, 1 );
-        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0x03ffffff, 1 );
-
-        std::cout << "\n";
-        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0x03ffffff, 1 );
-        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0x03ffffff, 1 );
-
-//        std::cout << "\n";
-//        bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0x03ffffff, 1 );
-//        bench<vecidx::tree_index, uint64_t>( "vecidx::tree_index, uint64", 0x03ffffff, 1 );
-
-        std::cout << "\n";
-        bench<vecidx::smart_step, uint32_t>( "vecidx::smart_step, uint32", 0x03ffffff, 1 );
-        bench<vecidx::smart_step2, uint32_t>( "vecidx::smart_step2, uint32", 0x03ffffff, 1 );
-    }
-
-//    std::cout << "\nsize: 0x000f'ffff\n\n";
-//    while( 1 )
 //    {
-//        size_t base = bench<vector_only, uint32_t>( "vector_only, uint32", 0x000fffff, 100 );
-//        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0x000fffff, 100 );
-//        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0x000fffff, 100 );
-//        bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0x000fffff, 100 );
-//        bench<vecidx::smart_step, uint32_t>( "vecidx::smart_step,  uint32", 0x000fffff, 100 );
-//        size_t late = bench<lsmart_step, uint32_t>( "lsmart_step,  uint32", 0x000fffff, 100 );
+//        std::cout << "\nsize: 0xff\n\n";
+//        bench<vector_only,  uint8_t>( "vector_only,  uint8", 0xff, 100000 );
+//        bench<vector_only, uint16_t>( "vector_only, uint16", 0xff, 100000 );
+//        bench<vector_only, uint32_t>( "vector_only, uint32", 0xff, 100000 );
+//        bench<vector_only, uint64_t>( "vector_only, uint64", 0xff, 100000 );
 //
-//        std::cout << std::endl << "Smart Step Diff: " << std::fixed << std::setprecision(2)
-//                  << 100.0f * (((float) late)/((float) base) - 1.0f) << "%"
-//                  << std::endl << std::endl;
+//        std::cout << "\n";
+//        bench<vecidx::vector_index,  uint8_t>( "vecidx::vector_index,  uint8", 0xff, 100000 );
+//        bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xff, 100000 );
+//        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xff, 100000 );
+//        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xff, 100000 );
+//
+//        std::cout << "\n";
+//        bench<vecidx::search_index, uint8_t>( "vecidx::search_index,  uint8", 0xff, 100000 );
+//        bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xff, 100000 );
+//        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xff, 100000 );
+//        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xff, 100000 );
+//
+////        std::cout << "\n";
+////        bench<vecidx::tree_index,  uint8_t>( "vecidx::tree_index,  uint8", 0xff, 100000 );
+////        bench<vecidx::tree_index, uint16_t>( "vecidx::tree_index, uint16", 0xff, 100000 );
+////        bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0xff, 100000 );
+////        bench<vecidx::tree_index, uint64_t>( "vecidx::tree_index, uint64", 0xff, 100000 );
+//
+//        std::cout << "\n";
+//        bench<vecidx::smart_step, uint32_t>( "vecidx::smart_step, uint32", 0xff, 100000 );
+//        bench<vecidx::smart_step2, uint32_t>( "vecidx::smart_step2, uint32", 0xff, 100000 );
 //    }
+//
+//    {
+//        std::cout << "\nsize: 0xffff\n\n";
+//        bench<vector_only, uint16_t>( "vector_only, uint16", 0xffff, 100 );
+//        bench<vector_only, uint32_t>( "vector_only, uint32", 0xffff, 100 );
+//        bench<vector_only, uint64_t>( "vector_only, uint64", 0xffff, 100 );
+//
+//        std::cout << "\n";
+//        bench<vecidx::vector_index, uint16_t>( "vecidx::vector_index, uint16", 0xffff, 100 );
+//        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0xffff, 100 );
+//        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0xffff, 100 );
+//
+//        std::cout << "\n";
+//        bench<vecidx::search_index, uint16_t>( "vecidx::search_index, uint16", 0xffff, 100 );
+//        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0xffff, 100 );
+//        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0xffff, 100 );
+//
+////        std::cout << "\n";
+////        bench<vecidx::tree_index, uint16_t>( "vecidx::tree_index, uint16", 0xffff, 100 );
+////        bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0xffff, 100 );
+////        bench<vecidx::tree_index, uint64_t>( "vecidx::tree_index, uint64", 0xffff, 100 );
+//
+//        std::cout << "\n";
+//        bench<vecidx::smart_step, uint32_t>( "vecidx::smart_step, uint32", 0xffff, 100 );
+//        bench<vecidx::smart_step2, uint32_t>( "vecidx::smart_step2, uint32", 0xffff, 100 );
+//    }
+//
+//    {
+//        std::cout << "\nsize: 0x03ff'ffff\n\n";
+//        bench<vector_only, uint32_t>( "vector_only, uint32", 0x03ffffff, 1 );
+//        bench<vector_only, uint64_t>( "vector_only, uint64", 0x03ffffff, 1 );
+//
+//        std::cout << "\n";
+//        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0x03ffffff, 1 );
+//        bench<vecidx::vector_index, uint64_t>( "vecidx::vector_index, uint64", 0x03ffffff, 1 );
+//
+//        std::cout << "\n";
+//        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0x03ffffff, 1 );
+//        bench<vecidx::search_index, uint64_t>( "vecidx::search_index, uint64", 0x03ffffff, 1 );
+//
+////        std::cout << "\n";
+////        bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0x03ffffff, 1 );
+////        bench<vecidx::tree_index, uint64_t>( "vecidx::tree_index, uint64", 0x03ffffff, 1 );
+//
+//        std::cout << "\n";
+//        bench<vecidx::smart_step, uint32_t>( "vecidx::smart_step, uint32", 0x03ffffff, 1 );
+//        bench<vecidx::smart_step2, uint32_t>( "vecidx::smart_step2, uint32", 0x03ffffff, 1 );
+//    }
+
+    std::cout << "\nsize: 0x00ff'ffff\n\n";
+    while( 1 )
+    {
+        size_t base = bench<vector_only, uint32_t>( "vector_only, uint32", 0x00ffffff, 10 );
+//        bench<vecidx::vector_index, uint32_t>( "vecidx::vector_index, uint32", 0x00ffffff, 10 );
+//        bench<vecidx::search_index, uint32_t>( "vecidx::search_index, uint32", 0x00ffffff, 10 );
+//        bench<vecidx::tree_index, uint32_t>( "vecidx::tree_index, uint32", 0x00ffffff, 10 );
+//        bench<vecidx::smart_step2, uint32_t>( "vecidx::smart_step2,  uint32", 0x00ffffff, 10 );
+        size_t late = bench<vecidx::smart_step, uint32_t>( "vecidx::smart_step,  uint32", 0x00ffffff, 10 );
+
+        std::cout << std::endl << "Smart Step Diff: " << std::fixed << std::setprecision(2)
+                  << 100.0f * (((float) late)/((float) base) - 1.0f) << "%"
+                  << std::endl << "Base: " << base << " - Late: " << late
+                  << std::endl << std::endl;
+    }
     return 0;
 }
